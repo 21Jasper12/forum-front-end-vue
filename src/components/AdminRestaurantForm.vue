@@ -1,5 +1,10 @@
 <template>
-  <form @submit.stop.prevent="handleSubmit">
+  <Spinner v-if="isLoading" />
+  
+  <form 
+    @submit.stop.prevent="handleSubmit" 
+    v-else
+  >
     <div class="form-group">
       <label for="name">Name</label>
       <input
@@ -98,59 +103,73 @@
       />
     </div>
 
-    <button type="submit" class="btn btn-primary">送出</button>
+    <button 
+      type="submit" 
+      class="btn btn-primary"
+      :disabled="isProcessing"
+    >
+      {{ isProcessing ? "處理中..." : "送出" }}
+    </button>
   </form>
 </template>
 
 <script>
-const dummyData = {
-  categories: [
-    {
-      id: 1,
-      name: "中式料理",
-      createdAt: "2022-08-09T16:06:07.000Z",
-      updatedAt: "2022-08-09T16:06:07.000Z",
-    },
-    {
-      id: 2,
-      name: "日本料理",
-      createdAt: "2022-08-09T16:06:07.000Z",
-      updatedAt: "2022-08-09T16:06:07.000Z",
-    },
-    {
-      id: 3,
-      name: "義大利料理",
-      createdAt: "2022-08-09T16:06:07.000Z",
-      updatedAt: "2022-08-09T16:06:07.000Z",
-    },
-    {
-      id: 4,
-      name: "墨西哥料理",
-      createdAt: "2022-08-09T16:06:07.000Z",
-      updatedAt: "2022-08-09T16:06:07.000Z",
-    },
-    {
-      id: 5,
-      name: "素食料理",
-      createdAt: "2022-08-09T16:06:07.000Z",
-      updatedAt: "2022-08-09T16:06:07.000Z",
-    },
-    {
-      id: 6,
-      name: "美式料理",
-      createdAt: "2022-08-09T16:06:07.000Z",
-      updatedAt: "2022-08-09T16:06:07.000Z",
-    },
-    {
-      id: 7,
-      name: "複合式料理",
-      createdAt: "2022-08-09T16:06:07.000Z",
-      updatedAt: "2022-08-09T16:06:07.000Z",
-    },
-  ],
-};
+import adminAPI from './../apis/admin'
+import { Toast } from './../utils/helpers' 
+import Spinner from './../components/Spinner.vue'
+
+// 串接API後就能刪掉假資料了
+// const dummyData = {
+//   categories: [
+//     {
+//       id: 1,
+//       name: "中式料理",
+//       createdAt: "2022-08-09T16:06:07.000Z",
+//       updatedAt: "2022-08-09T16:06:07.000Z",
+//     },
+//     {
+//       id: 2,
+//       name: "日本料理",
+//       createdAt: "2022-08-09T16:06:07.000Z",
+//       updatedAt: "2022-08-09T16:06:07.000Z",
+//     },
+//     {
+//       id: 3,
+//       name: "義大利料理",
+//       createdAt: "2022-08-09T16:06:07.000Z",
+//       updatedAt: "2022-08-09T16:06:07.000Z",
+//     },
+//     {
+//       id: 4,
+//       name: "墨西哥料理",
+//       createdAt: "2022-08-09T16:06:07.000Z",
+//       updatedAt: "2022-08-09T16:06:07.000Z",
+//     },
+//     {
+//       id: 5,
+//       name: "素食料理",
+//       createdAt: "2022-08-09T16:06:07.000Z",
+//       updatedAt: "2022-08-09T16:06:07.000Z",
+//     },
+//     {
+//       id: 6,
+//       name: "美式料理",
+//       createdAt: "2022-08-09T16:06:07.000Z",
+//       updatedAt: "2022-08-09T16:06:07.000Z",
+//     },
+//     {
+//       id: 7,
+//       name: "複合式料理",
+//       createdAt: "2022-08-09T16:06:07.000Z",
+//       updatedAt: "2022-08-09T16:06:07.000Z",
+//     },
+//   ],
+// };
 
 export default {
+  components: {
+    Spinner
+  },
   props: {
     initialRestaurant: {
       type: Object,
@@ -165,6 +184,10 @@ export default {
           openingHours: '',
         }
       }
+    },
+    isProcessing: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -183,19 +206,43 @@ export default {
         // openingHours: "",
       },
       categories: [],
+      isLoading: true
     };
   },
+   watch: {
+    initialRestaurant (newValue) {
+      this.restaurant = {
+        ...this.restaurant,
+        ...newValue
+      }
+    }
+  },
   methods: {
-    fetchCategories () {
-      this.categories = dummyData.categories
+    async fetchCategories () {
+      try{
+        this.isLoading = true
+        const { data } = await adminAPI.categories.get()
+
+        this.categories = data.categories
+        this.isLoading = false
+      }
+      catch(error){
+        console.log(error.message)
+        this.isLoading = false
+
+        Toast.fire({
+          icon: 'error',
+          title: '無法取得餐廳類別，請稍後再試'
+        })
+      }
     },
     handleFileChange (e) {
       // 解構賦值的方式拿資料
       const { files } = e.target
       // 如果不是用解構賦值的方式拿資料，就要到相對應的路徑拿資料
-      const test = e.target.files
-      console.log('files', files)
-      console.log('test', test)
+      // const test = e.target.files
+      // console.log('files', files)
+      // console.log('test', test)
 
       if (files.length === 0) {
         // 使用者沒有選擇上傳的檔案
@@ -209,6 +256,20 @@ export default {
 
     },
     handleSubmit(e) {
+      if (!this.restaurant.name) {
+        Toast.fire({
+          icon: 'warning',
+          title: '請填寫餐廳名稱'
+        })
+        return
+      } else if (!this.restaurant.categoryId) {
+        Toast.fire({
+          icon: 'warning',
+          title: '請選擇餐廳類別'
+        })
+        return
+      }
+
       const form = e.target
       const formData = new FormData(form)
       this.$emit('after-submit', formData)

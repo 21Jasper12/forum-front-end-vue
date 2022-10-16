@@ -6,7 +6,7 @@
       <div class="row no-gutters">
         <div class="col-md-4">
           <router-link
-            :to="{name: 'restaurant-show', params: {id: restaurant.id}}"
+            :to="{name: 'restaurant-show', params: { id: restaurant.id } }"
           >
             <img
               class="card-img"
@@ -25,7 +25,7 @@
             </p>
             <router-link
               class="btn btn-primary mr-2"
-              :to="{name: 'restaurant-show', params: {id: restaurant.id}}"
+              :to="{name: 'restaurant-show', params: { id: restaurant.id } }"
             >
             Show
             </router-link>
@@ -34,7 +34,8 @@
               type="button"
               class="btn btn-danger mr-2"
               v-if="restaurant.isFavorited"
-              @click.stop.prevent="deleteFavorite"
+              :disabled="isProcessing"
+              @click.stop.prevent="deleteFavorite(restaurant.id)"
             >
               移除最愛
             </button>
@@ -42,7 +43,8 @@
               type="button"
               class="btn btn-primary"
               v-else
-              @click.stop.prevent="addFavorite"
+              :disabled="isProcessing"
+              @click.stop.prevent="addFavorite(restaurant.id)"
             >
               加到最愛
             </button>
@@ -54,6 +56,8 @@
 
 <script>
 import { emptyImageFilter } from './../utils/mixins'
+import usersAPI from './../apis/user'
+import { Toast } from './../utils/helpers'
 
 export default {
   mixins:[emptyImageFilter],
@@ -65,20 +69,63 @@ export default {
   },
   data() {
     return {
-      restaurant: this.initialRestaurant
+      restaurant: this.initialRestaurant,
+      isProcessing: false
     }
   },
   methods: {
-    addFavorite () {
-      this.restaurant = {
-        ...this.restaurant, // 保留餐廳內原有資料
-        isFavorited: true
+    async addFavorite(restaurantId) {
+      try{
+        this.isProcessing = true
+        const { data } = await usersAPI.addFavorite({ restaurantId })
+        
+        if(data.status !== 'success'){
+          throw new Error(data.message)
+        }
+
+        this.restaurant = {
+          ...this.restaurant, // 保留餐廳內原有資料
+          isFavorited: true
+        }
+        this.restaurant.FavoriteCount += 1
+
+        this.isProcessing = false
+      }
+      catch(error){
+        this.isProcessing = false
+        console.error(error.message)
+
+        Toast.fire({
+          icon: 'error',
+          title: '無法將餐廳加入最愛，請稍後再試'
+        })
       }
     },
-    deleteFavorite () {
-      this.restaurant = {
-        ...this.restaurant, // 保留餐廳內原有資料
-        isFavorited: false
+    async deleteFavorite(restaurantId) {
+      try{
+        this.isProcessing = true
+        const { data } = await usersAPI.deleteFavorite({ restaurantId })
+        
+        if(data.status !== 'success'){
+          throw new Error(data.message)
+        }
+        
+        this.restaurant = {
+          ...this.restaurant, // 保留餐廳內原有資料
+          isFavorited: false
+        }
+        this.restaurant.FavoriteCount -= 1
+
+        this.isProcessing = false
+      }
+      catch(error){
+        this.isProcessing = false
+        console.error(error.message)
+
+        Toast.fire({
+          icon: 'error',
+          title: '無法將餐廳移除最愛，請稍後再試'
+        })
       }
     }
   }

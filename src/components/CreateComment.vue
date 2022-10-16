@@ -20,15 +20,17 @@
       <button
         type="submit"
         class="btn btn-primary mr-0"
+        :disabled="isProcessing"
       >
-        Submit
+        {{ isProcessing ? '處理中...' : 'Submit' }}
       </button>
     </div>
   </form>
 </template>
 
 <script>
-import { v4 as uuidv4 } from "uuid"
+import restaurantsAPI from './../apis/restaurants'
+import { Toast } from './../utils/helpers'
 
 export default {
   props: {
@@ -40,20 +42,50 @@ export default {
   data() {
     return {
       text: '',
+      isProcessing: false
     }
   },
   methods: {
-    handleSubmit() {
-      // console.log('submit form') 測試
-      // TODO: 向 API 發送 POST 請求
-      // 伺服器新增 Comment 成功後...
-      this.$emit('after-create-comment',{
-        commentId: uuidv4(), // 尚未串接 API 暫時使用隨機的 id
-        restaurantId: this.restaurantId,
-        text: this.text
-      })
-      this.text = '' // 將表單內的資料清空
+    async handleSubmit() {
+      try{
+        this.isProcessing = true
+        const { data } = await restaurantsAPI.createComment({
+          restaurantId: this.restaurantId,
+          text: this.text
+        })
+
+        if(data.status !== 'success'){
+          throw new Error(data.message)
+        }
+        
+        // console.log('submit form') 測試
+        // TODO: 向 API 發送 POST 請求
+        // 伺服器新增 Comment 成功後...
+        this.$emit('after-create-comment',{
+          commentId: data.commentId, // 尚未串接 API 暫時使用隨機的 id
+          restaurantId: this.restaurantId,
+          text: this.text
+        })
+        this.text = '' // 將表單內的資料清空
+
+        this.isProcessing = false
+      }
+      catch(error){
+        this.isProcessing = false
+        console.error(error.message)
+
+        Toast.fire({
+          icon: 'error',
+          title: '無法新增評論，請稍後再試'
+        })
+      }
     }
   }
 }
 </script>
+
+<style scoped>
+.form-group {
+  margin: 21px 0 8px;
+}
+</style>

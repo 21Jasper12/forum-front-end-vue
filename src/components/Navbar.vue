@@ -44,6 +44,7 @@
          <button
            type="button" 
            class="btn btn-sm btn-outline-success my-2 my-sm-0"
+           @click="logout"
           >
            登出
           </button>
@@ -54,44 +55,78 @@
 </template>
 
 <script>
-const dummyUser = {
-  currentUser: {
-    id: 1,
-    name: '管理者',
-    email: 'root@example.com',
-    image: 'https://i.pravatar.cc/300',
-    isAdmin: true
-  },
-  isAuthenticated: true
-}
+import { mapState } from 'vuex'
+
+// Step1：移除 dummyUser
+// const dummyUser = {
+//   currentUser: {
+//     id: 1,
+//     name: '管理者',
+//     email: 'root@example.com',
+//     image: 'https://i.pravatar.cc/300',
+//     isAdmin: true
+//   },
+//   isAuthenticated: true
+// }
 
 export default {
-  data () {
-    return {
-      currentUser: {
-        id: -1,
-        name: '',
-        email: '',
-        image: '',
-        isAdmin: false
-      },
-      isAuthenticated: false
+  // Step2：移除 data 屬性
+  // data () {
+  //   return {
+  //     currentUser: {
+  //       id: -1,
+  //       name: '',
+  //       email: '',
+  //       image: '',
+  //       isAdmin: false
+  //     },
+  //     isAuthenticated: false
 
-    }
+  //   }
+  // },
+
+
+  // Step3：移除 created 和 fetchUser 的方法
+  // methods: {
+  //   fetchUser () {
+  //     this.currentUser = {
+  //       ...this.currentUser,
+  //       ...dummyUser.currentUser
+  //     }
+  //     this.isAuthenticated = dummyUser.isAuthenticated
+  //   }
+  // },
+
+  // created () {
+  //   this.fetchUser()
+  // },
+
+  // Step4：新增 `mapState` 方法
+  computed: {
+    ...mapState(['currentUser', 'isAuthenticated'])
   },
-
   methods: {
-    fetchUser () {
-      this.currentUser = {
-        ...this.currentUser,
-        ...dummyUser.currentUser
-      }
-      this.isAuthenticated = dummyUser.isAuthenticated
+    logout () {
+      this.$store.commit('revokeAuthentication')
+      this.$router.push('/signin')
     }
-  },
-
-  created () {
-    this.fetchUser()
-  },
+  }
 }
 </script>
+
+<style scoped>
+  .navbar-toggler {
+    min-width: 70px;
+    margin-right: 0;
+  }
+
+  nav.bg-dark {
+    padding: 14px 16px;
+    background-color: #bd2333 !important;
+  }
+
+  .navbar-brand {
+    font-size: 19px;
+    padding: 0;
+}
+</style>

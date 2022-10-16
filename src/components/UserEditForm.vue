@@ -36,14 +36,17 @@
       <button
         type="submit"
         class="btn btn-primary"
+        :disabled="isProcessing"
       >
-        Submit
+        {{ isProcessing ? "處理中..." : "Submit" }}
       </button>
     </form>
   </div>
 </template>
 
 <script>
+import { Toast } from './../utils/helpers'
+
 export default {
   props: {
     initialUser: {
@@ -54,12 +57,24 @@ export default {
           image: '',
         }
       }
+    },
+    isProcessing: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
       user: {
         ...this.initialUser
+      }
+    }
+  },
+  watch: {
+    initialUser(newValue){
+      this.user = {
+        ...this.user,
+        ...newValue
       }
     }
   },
@@ -78,6 +93,14 @@ export default {
       
     },
     handleSubmit(e) {
+      if(!this.user.name.trim()){
+        Toast.fire({
+          icon: 'warning',
+          title: '請填使用者名稱'
+        })
+        return
+      }
+
       const form = e.target
       const formData = new FormData(form)
       this.$emit('after-submit', formData)

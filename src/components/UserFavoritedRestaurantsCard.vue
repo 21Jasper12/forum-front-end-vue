@@ -5,7 +5,7 @@
       <router-link
         v-for="favoritedrestaurant in favoritedrestaurants"
         :key="favoritedrestaurant.id"
-        :to="{ name: 'restaurant-show', params: { id: favoritedrestaurant.id }}"
+        :to="{ name: 'restaurant-show', params: { id: favoritedrestaurant.id } }"
       >
         <img
           :src="favoritedrestaurant.image | emptyImage"
