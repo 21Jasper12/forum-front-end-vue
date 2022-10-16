@@ -1,7 +1,7 @@
 # forum-front-end-vue
 
 # 餐廳清單
-![image](https://github.com/21Jasper12/AC_Shop/blob/main/img/computer-screen.png)
+![image](https://github.com/21Jasper12/forum-front-end-vue/blob/main/src/image/front-end-vue.jpg)
 
 ## 介紹
 ---
