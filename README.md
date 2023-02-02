@@ -1,5 +1,45 @@
 # forum-front-end-vue
 
+### 【瀏覽網站前要先行前準備】
+```
+1. git clone https://github.com/ALPHACamp/forum-express.git
+```
+
+```
+2. cd forum-express
+```
+
+```
+3. npm install
+```
+
+```
+4. 安裝 MySQL 與圖形化介面 Workbench ， 並使用 MySQL 和 MySQL Workbench 建立本地伺服器連線
+```
+
+```
+5. 使用 MySQL Workbench 建立 forum 資料庫
+```
+
+```
+6. npx sequelize db:migrate
+```
+
+```
+7. npx sequelize db:seed:all
+```
+
+```
+8. npm run dev(啟動server)
+```
+
+
+### 【網站連結】
+
+```
+https://21jasper12.github.io/forum-front-end-vue/
+```
+
 # 餐廳清單
 ![image](https://github.com/21Jasper12/forum-front-end-vue/blob/main/src/image/front-end-vue.jpg)
 
