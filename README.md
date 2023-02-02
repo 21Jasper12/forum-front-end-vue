@@ -1,44 +1,47 @@
 # forum-front-end-vue
 
 ### 【瀏覽網站前要先行前準備】
+
+1. 下載server相關資料
 ```
-1. git clone https://github.com/ALPHACamp/forum-express.git
+git clone https://github.com/ALPHACamp/forum-express.git
 ```
 
+2. 進到相關資料夾
 ```
-2. cd forum-express
-```
-
-```
-3. npm install
+cd forum-express
 ```
 
+3. 下載node_modules
 ```
+npm install
+```
+
 4. 安裝 MySQL 與圖形化介面 Workbench ， 並使用 MySQL 和 MySQL Workbench 建立本地伺服器連線
-```
 
-```
+
 5. 使用 MySQL Workbench 建立 forum 資料庫
+
+
+6. SQL相關設定
+```
+npx sequelize db:migrate
 ```
 
+7. SQL相關設定
 ```
-6. npx sequelize db:migrate
-```
-
-```
-7. npx sequelize db:seed:all
+npx sequelize db:seed:all
 ```
 
+8. 啟動server
 ```
-8. npm run dev(啟動server)
+npm run dev
 ```
 
 
 ### 【網站連結】
+> https://21jasper12.github.io/forum-front-end-vue/
 
-```
-https://21jasper12.github.io/forum-front-end-vue/
-```
 
 # 餐廳清單
 ![image](https://github.com/21Jasper12/forum-front-end-vue/blob/main/src/image/front-end-vue.jpg)
