@@ -43,6 +43,10 @@ npm run dev
 > https://21jasper12.github.io/forum-front-end-vue/
 
 
+### 【測試帳號】
+* 帳號：root@example.com
+* 密碼：12345678
+
 # 餐廳清單
 ![image](https://github.com/21Jasper12/forum-front-end-vue/blob/main/src/image/front-end-vue.jpg)
 
