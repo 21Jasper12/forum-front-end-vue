@@ -50,6 +50,21 @@ npm run dev
 # 餐廳清單
 ![image](https://github.com/21Jasper12/forum-front-end-vue/blob/main/src/image/front-end-vue.jpg)
 
+# 最新動態
+![image](https://github.com/21Jasper12/forum-front-end-vue/blob/main/src/image/RestaurantFeeds.jpg)
+
+# Top 10 人氣餐廳
+![image](https://github.com/21Jasper12/forum-front-end-vue/blob/main/src/image/RestaurantTop.jpg)
+
+# 美食達人
+![image](https://github.com/21Jasper12/forum-front-end-vue/blob/main/src/image/UserTop.jpg)
+
+# 美食達人
+![image](https://github.com/21Jasper12/forum-front-end-vue/blob/main/src/image/UserTop.jpg)
+
+# 後台
+![image](https://github.com/21Jasper12/forum-front-end-vue/blob/main/src/image/AdminRestaurants.jpg)
+
 ## 介紹
 ---
 這是一個餐廳論壇平台。
